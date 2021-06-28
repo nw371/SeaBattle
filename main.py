@@ -22,29 +22,40 @@ print(d1 == d2)
 
 
 class Battlefield:
-    __list_to_print = []
+    btfld = [
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0]
+    ]
 
     def __init__(self):
         self.v_size = 6
         self.h_size = 6
 
+
+    def place_ship(self,ship):
+        for i in range(0,(int(len(ship)/2)-1)):
+            self.btfld[ship[i][0]][ship[i][1]] = 1
+
+
     def __repr__(self):
-        return f"Поле битвы"
-        pass
+        return f"Поле битвы '\n' {self.btfld}"
 
 
-bf1 = Battlefield()
-print(bf1)
+
 
 
 class Ship:
-    def __init__(self, v_origin, h_origin, size, orientation):
+    def __init__(self, h_origin, v_origin, size, orientation):
         self.origin = [v_origin, h_origin]
         self.size = size
         self.set_orientation(orientation)
         self.ship = []
 
-    def build_ship(self):
+    def body(self):
         self.ship.append(self.origin.copy())
         for i in range(1, self.size):
             self.origin[self.orientation] += 1
@@ -57,10 +68,15 @@ class Ship:
         elif orientation == "h":
             self.orientation = 1
 
-s1 = Ship(2,2,4,"v")
+
+s1 = Ship(2, 2, 4, "v")
 print(s1.orientation)
-print(s1.build_ship())
+print(s1.body())
+bf1 = Battlefield()
+bf1.place_ship(s1.body())
+#print(bf1.place_ship(s1.body()))
+print(bf1)
+
 
 class Game:
     pass
-
