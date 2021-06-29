@@ -1,6 +1,11 @@
 class GameExceptions(Exception):
     pass
 
+# class ValueError(GameExceptions):
+#     def __init__(self, message):
+#         self.message = message
+#         if self.message == "1 is not in list":
+#             pass
 
 class Dot:
     def __init__(self, v, h):
@@ -37,14 +42,28 @@ class Battlefield:
 
 
     def place_ship(self,ship):
-        for i in range(0,(int(len(ship)/2)-1)):
-            self.btfld[ship[i][0]][ship[i][1]] = 1
+        for i in range(0,(int(len(ship)/2))):
+            self.btfld[ship[i][0]-1][ship[i][1]-1] = 1
+
+    def place_blind_spots(self):
+        control_line = 0
+        for rows in self.btfld:
+            try:
+                dot_index = rows.index(1)
+                #if control_line == 0:
+                print(f"This is rows: {self.btfld.index(rows)}")
+                    # (rows-1)[dot_index-1] = 8
+                rows[dot_index-1] = 8
+                rows[dot_index+1] = 8
+            except ValueError as e:
+                print(f"Error happened: {e}")
+
+                continue
 
 
     def __repr__(self):
-        return f"Поле битвы '\n' {self.btfld}"
-
-
+        print('\n'.join(map(str, self.btfld)))
+        return f"Поле битвы"
 
 
 
@@ -75,8 +94,9 @@ print(s1.body())
 bf1 = Battlefield()
 bf1.place_ship(s1.body())
 #print(bf1.place_ship(s1.body()))
+bf1.place_blind_spots()
 print(bf1)
-
+print(bf1.place_blind_spots())
 
 class Game:
     pass
