@@ -35,7 +35,7 @@ class Battlefield:
         [0,0,0,0,0,0],
         [0,0,0,0,0,0]
     ]
-
+    control_line = []
     def __init__(self):
         self.v_size = 6
         self.h_size = 6
@@ -46,19 +46,33 @@ class Battlefield:
             self.btfld[ship[i][0]-1][ship[i][1]-1] = 1
 
     def place_blind_spots(self):
-        control_line = 0
         for rows in self.btfld:
-            try:
-                dot_index = rows.index(1)
-                #if control_line == 0:
-                print(f"This is rows: {self.btfld.index(rows)}")
-                    # (rows-1)[dot_index-1] = 8
-                rows[dot_index-1] = 8
-                rows[dot_index+1] = 8
-            except ValueError as e:
-                print(f"Error happened: {e}")
+            if 1 in rows:
+                self.control_line = [*[self.btfld.index(rows)],*[rows.index(1)]]
 
-                continue
+                print(f"Sel_line {self.control_line}")
+
+                # for z in range(-1, 2):
+                #     if self.btfld[rows.index(1)+z][self.btfld.index(rows)+z*(-1)] == 0:
+                #         self.btfld[rows.index(1)+z][self.btfld.index(rows)+z*(-1)] = 8
+                #     elif self.btfld[rows.index(1)+z][self.btfld.index(rows)+z] == 0:
+                #         self.btfld[rows.index(1) + z][self.btfld.index(rows) + z] = 8
+                #     elif self.btfld[rows.index(1)+z*(-1)][self.btfld.index(rows)+z] == 0:
+                #         self.btfld[rows.index(1) + z*(-1)][self.btfld.index(rows) + z] = 8
+                print(f"INDEX {rows.index(1)} and {self.btfld.index(rows)}")
+
+
+            #     self.control_line = self.btfld.index(rows)
+            # else:
+            #     dot_index = rows.index(1)
+            #     for z in range(-1,2):
+            #         self.btfld[self.control_line][dot_index-z] = 8
+            #         self.control_line == 0
+            #     rows[dot_index-1] = 8
+            #     rows[dot_index+1] = 8
+
+
+
 
 
     def __repr__(self):
@@ -88,7 +102,7 @@ class Ship:
             self.orientation = 1
 
 
-s1 = Ship(2, 2, 4, "v")
+s1 = Ship(2, 2, 4, "h")
 print(s1.orientation)
 print(s1.body())
 bf1 = Battlefield()
