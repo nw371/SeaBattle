@@ -35,7 +35,7 @@ class Battlefield:
         [0,0,0,0,0,0],
         [0,0,0,0,0,0]
     ]
-    control_line = []
+    coordinate_on_check = []
     def __init__(self):
         self.v_size = 6
         self.h_size = 6
@@ -47,33 +47,21 @@ class Battlefield:
 
     def place_blind_spots(self):
         for rows in self.btfld:
-            if 1 in rows:
-                self.control_line = [*[self.btfld.index(rows)],*[rows.index(1)]]
+            #print("Rows: ", rows)
+            list_of_ind = [ind for ind, x in enumerate(rows) if x == 1]
+            #print("List of ind: ", list_of_ind)
+            #if 1 in rows:
+            if len(list_of_ind) > 0:
+                for indexes in list_of_ind:
+                    #print("Indexes: ", list_of_ind[indexes-1], rows, indexes)
+                    self.coordinate_on_check = [*[self.btfld.index(rows)], *[list_of_ind[indexes-1]]]
+                    for i in range(-1, 2):
+                        for t in range(-1, 2):
+                            print(self.coordinate_on_check[0] + i, self.coordinate_on_check[1] + t)
+                            if self.btfld[self.coordinate_on_check[0] + i][self.coordinate_on_check[1] + t] == 0:
+                                self.btfld[self.coordinate_on_check[0] + i][self.coordinate_on_check[1] + t] = 8
 
-                print(f"Sel_line {self.control_line}")
-
-                # for z in range(-1, 2):
-                #     if self.btfld[rows.index(1)+z][self.btfld.index(rows)+z*(-1)] == 0:
-                #         self.btfld[rows.index(1)+z][self.btfld.index(rows)+z*(-1)] = 8
-                #     elif self.btfld[rows.index(1)+z][self.btfld.index(rows)+z] == 0:
-                #         self.btfld[rows.index(1) + z][self.btfld.index(rows) + z] = 8
-                #     elif self.btfld[rows.index(1)+z*(-1)][self.btfld.index(rows)+z] == 0:
-                #         self.btfld[rows.index(1) + z*(-1)][self.btfld.index(rows) + z] = 8
-                print(f"INDEX {rows.index(1)} and {self.btfld.index(rows)}")
-
-
-            #     self.control_line = self.btfld.index(rows)
-            # else:
-            #     dot_index = rows.index(1)
-            #     for z in range(-1,2):
-            #         self.btfld[self.control_line][dot_index-z] = 8
-            #         self.control_line == 0
-            #     rows[dot_index-1] = 8
-            #     rows[dot_index+1] = 8
-
-
-
-
+                    #print(f"Sel_line {self.coordinate_on_check}")
 
     def __repr__(self):
         print('\n'.join(map(str, self.btfld)))
@@ -102,7 +90,7 @@ class Ship:
             self.orientation = 1
 
 
-s1 = Ship(2, 2, 4, "h")
+s1 = Ship(2, 2, 4, "v")
 print(s1.orientation)
 print(s1.body())
 bf1 = Battlefield()
