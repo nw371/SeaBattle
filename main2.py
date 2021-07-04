@@ -11,7 +11,7 @@ class Board:
     def __init__(self):
         pass
 
-    def drawdesk(self):
+    def form_field(self):
         row_to_print = [" "]
         for i in self.coordinates.keys():
             row_to_print.append(i)
@@ -26,7 +26,7 @@ class Board:
 
 
 b1 =Board()
-b1.drawdesk()
+b1.form_field()
 
 # class Gameboard:
 #     v_coord = ["А", "Б", "В", "Г", "Д", "Е"]
