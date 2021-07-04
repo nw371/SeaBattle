@@ -20,7 +20,7 @@ class Dot:
 
 
 d1 = Dot(6, 5)
-d2 = Dot(6, 5)
+d2 = Dot(2, 3)
 print(d1)
 print(d2)
 print(d1 == d2)
@@ -47,24 +47,34 @@ class Battlefield:
 
     def place_blind_spots(self):
         for rows in self.btfld:
-            #print("Rows: ", rows)
-            print("Index 0 rows: ", self.btfld.index(rows))
             list_of_ind = [ind for ind, x in enumerate(rows) if x == 1]
-            #print("List of ind: ", list_of_ind)
-            #if 1 in rows:
+
             if len(list_of_ind) > 0:
                 for indexes in list_of_ind:
-                    #print("Indexes: ", list_of_ind[indexes-1], rows, indexes)
-                    #self.coordinate_on_check = [*[self.btfld.index(rows)-1], *[list_of_ind[indexes-1]]]
+
                     self.coordinate_on_check = [*[self.btfld.index(rows) - 1], indexes]
-                    print("Index rows: ", self.btfld.index(rows))
+
                     for i in range(-1, 2):
                         for t in range(-1, 2):
-                            #print(self.coordinate_on_check[0] + i, self.coordinate_on_check[1] + t)
+
                             if self.btfld[self.coordinate_on_check[0] + i][self.coordinate_on_check[1] + t] == 0:
                                 self.btfld[self.coordinate_on_check[0] + i][self.coordinate_on_check[1] + t] = 8
 
                     #print(f"Sel_line {self.coordinate_on_check}")
+
+    # def contour(self, ship, verb = False):
+    #     near = [
+    #         (-1, -1), (-1, 0) , (-1, 1),
+    #         (0, -1), (0, 0) , (0 , 1),
+    #         (1, -1), (1, 0) , (1, 1)
+    #     ]
+    #     for d in ship.dots:
+    #         for dx, dy in near:
+    #             cur = Dot(d.x + dx, d.y + dy)
+    #             if not(self.out(cur)) and cur not in self.busy:
+    #                 if verb:
+    #                     self.field[cur.x][cur.y] = "."
+    #                 self.busy.append(cur)
 
     def __repr__(self):
         print('\n'.join(map(str, self.btfld)))
