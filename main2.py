@@ -1,3 +1,34 @@
+import copy
+
+
+class Dot:
+    def __init__(self, v, h):
+        self.v = v
+        self.h = h
+
+    def __eq__(self, other):
+        return self.v == other.v and self.h == other.h
+
+    def __repr__(self):
+        return f'Точка({self.v},{self.h})'
+
+class Ship:
+    ship = []
+    def __init__(self,origin,size,orientation):
+        self.origin = origin
+        self.size = size
+        self.oritentation = orientation
+
+    def build_ship(self):
+        self.ship.append(copy.copy(self.origin))
+        while len(self.ship) < self.size:
+            if self.oritentation == "v":
+                self.origin.v += 1
+            elif self.oritentation == "h":
+                self.origin.h += 1
+            self.ship.append(copy.copy(self.origin))
+        return self.ship
+
 class Board:
     coordinates = {
         "А": [0,0,0,0,0,0],
@@ -15,52 +46,31 @@ class Board:
         row_to_print = [" "]
         for i in self.coordinates.keys():
             row_to_print.append(i)
-            #row_to_print.append(" | ")
 
         print(*row_to_print, sep=" | ", end=" |\n")
         for i in self.coordinates.keys():
+            print("— | "*7)
             print([key for key in self.coordinates.keys()].index(i)+1, *self.coordinates[i], sep= " | ", end=" |\n")
 
+    def change_dot(self,dot,look):
+
+        v_coord = [key for key in self.coordinates.keys()][dot.v-1]
+        self.coordinates[v_coord][dot.h-1] = look
+
+    def place_ship(self,ship):
+        for i in ship:
+            self.change_dot(i,"S")
 
 
 
+so4 = Dot(2,3)
+s1 = Ship(so4,4,"h")
 
+d1 = Dot(2,3)
 b1 =Board()
 b1.form_field()
-
-# class Gameboard:
-#     v_coord = ["А", "Б", "В", "Г", "Д", "Е"]
-#     h_coord = [1, 2, 3, 4, 5, 6]
-#     v_sep = " | "
-#     h_sep = "--"
-#     empt_field = "О"
-#     shp_filed = "■"
-#     miss_field = "-"
-#     hit_field = "+"
-#     gm_board = []
-#     brd_row = []
-#     def __init__(self):
-#         pass
-#
-#     def Createboard(self):
-#         self.brd_row.append(self.v_sep * 2)
-#         for i in self.v_coord:
-#             self.brd_row.append(i)
-#             self.brd_row.append(self.v_sep)
-#
-#         self.gm_board.append(self.brd_row.copy())
-#
-#         for i in self.h_coord:
-#             self.brd_row = []
-#             self.brd_row.append(i)
-#             for x in range(0,6):
-#                 self.brd_row.append(self.v_sep)
-#                 self.brd_row.append(self.empt_field)
-#             self.brd_row.append(self.v_sep)
-#             self.gm_board.append(self.brd_row.copy())
-#         unpacked_poard = print(*self.gm_board,sep="\n")
-#         #return "\n".join(map(str, self.gm_board))
-#         return  unpacked_poard
-# gmb1=Gameboard()
-# print(gmb1.Createboard())
+b1.change_dot(d1,"X")
+b1.form_field()
+b1.place_ship(s1.build_ship())
+b1.form_field()
 
