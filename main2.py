@@ -30,15 +30,18 @@ class Ship:
         return self.ship
 
 class Board:
+    ship_sym = "S"
+    fild_sym = 0
+    hit_ship_sym = "X"
+    miss_hit_sym = "Z"
     coordinates = {
-        "А": [0,0,0,0,0,0],
-        "Б": [0,0,0,0,0,0],
-        "В": [0,0,0,0,0,0],
-        "Г": [0,0,0,0,0,0],
-        "Д": [0,0,0,0,0,0],
-        "Е": [0,0,0,0,0,0]
+        "А": [fild_sym,fild_sym,fild_sym,fild_sym,fild_sym,fild_sym],
+        "Б": [fild_sym,fild_sym,fild_sym,fild_sym,fild_sym,fild_sym],
+        "В": [fild_sym,fild_sym,fild_sym,fild_sym,fild_sym,fild_sym],
+        "Г": [fild_sym,fild_sym,fild_sym,fild_sym,fild_sym,fild_sym],
+        "Д": [fild_sym,fild_sym,fild_sym,fild_sym,fild_sym,fild_sym],
+        "Е": [fild_sym,fild_sym,fild_sym,fild_sym,fild_sym,fild_sym]
     }
-
     def __init__(self):
         pass
 
@@ -59,7 +62,7 @@ class Board:
 
     def place_ship(self,ship):
         for i in ship:
-            self.change_dot(i,"S")
+            self.change_dot(i,self.ship_sym)
 
 
 
