@@ -64,6 +64,19 @@ class Board:
         for i in ship:
             self.change_dot(i,self.ship_sym)
 
+    def add_blinds(self,dot):
+        v_coord = [key for key in self.coordinates.keys()][dot.v - 1]
+        h_coord = [dot.h-1]
+        print(v_coord,h_coord)
+        for i in range(-1, 2):
+            for t in range(-1, 2):
+                print([key for key in self.coordinates.keys()][dot.v - (1+i)],[dot.h-(1+t)])
+
+
+        # for i in self.coordinates:
+        #     for s in self.coordinates[i]:
+        #         if s == "S":
+        #             print(s,i)
 
 
 so4 = Dot(2,3)
@@ -76,4 +89,5 @@ b1.change_dot(d1,"X")
 b1.form_field()
 b1.place_ship(s1.build_ship())
 b1.form_field()
+b1.add_blinds(d1)
 
