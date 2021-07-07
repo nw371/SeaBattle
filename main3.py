@@ -2,41 +2,58 @@ import copy
 from random import randint
 
 
-class BoardException(Exception):
-    pass
-
-class BoardOutException(BoardException):
-    def __str__(self):
-        return "Вы пытаетесь выстрелить за доску!"
-
-class BoardUsedException(BoardException):
-    def __str__(self):
-        return "Вы уже стреляли в эту клетку"
-
-class BoardWrongShipException(BoardException):
-    pass
-
 class Dot:
     def __init__(self, h, v):
+        """
+        Создаёт обьект точки
+        :param h: горизонтальная координата
+        :param v: вертикальная координата
+        """
         self.v = v
         self.h = h
 
     def __eq__(self, other):
+        """
+        Сравнение двух точек
+        :param other: координаты точки для сравнения
+        :return: Boolean
+        """
         return self.v == other.v and self.h == other.h
 
     def __repr__(self):
+        """
+        Выводит точку на печать
+        :return: String
+        """
         return f'Точка({self.v},{self.h})'
+
+    def swap(self):
+        """
+        Переставляет местами координаты у точки.
+        """
+        self.v, self.h = self.h, self.v
+
 
 class Ship:
     decks = []
-    def __init__(self,origin,size,orientation):
+
+    def __init__(self, origin, size, orientation):
+        """
+        Создаёт объект корабля
+        :param origin: Нос корабля. Точка отсчёта
+        :param size: Размер корабля в точках
+        :param orientation: Расположение корабля 1=вертикаль, 0=горизонталь
+        """
         self.origin = origin
         self.size = size
         self.oritentation = orientation
 
     @property
     def build_ship(self):
-
+        """
+        Создаёт корабль отсчитывая размер от носа по направлению ориентации
+        :return: Координаты всех палуб корабля в виде списка объектов точек
+        """
         while len(self.decks) < self.size:
 
             self.decks.append(copy.deepcopy(self.origin))
@@ -49,141 +66,128 @@ class Ship:
 
         return self.decks
 
+
 class Board:
 
     def __init__(self):
+        """
+        Создаёт объект доски
+        Все переменные собраны в конструкторе класса, для лёгкости управления
+        """
         self.ship_sym = "■"
         self.fild_sym = 0
         self.hit_ship_sym = "X"
         self.miss_hit_sym = "Z"
         self.blind_sym = "*"
         self.size = 6
-        self.huco = ["А","Б","В","Г","Д","Е"]
+        self.huco = ["А", "Б", "В", "Г", "Д", "Е"]
         self.separator = " | "
         self.blind_spots = []
-
         self.btfld = [[self.fild_sym] * self.size for _ in range(self.size)]
 
-    def Showbatlefield(self,mode=0):
-
-        print(" ",*self.huco, sep=self.separator, end=" |\n")
-        for i,dot in enumerate(self.btfld):
+    def Showbatlefield(self, mode=0):
+        """
+        Отрисовывает играовое поле
+        :param mode: Видимость кораблей на поле: 1 спрятаны, 0 видны
+        """
+        print(" ", *self.huco, sep=self.separator, end=" |\n")
+        for i, dot in enumerate(self.btfld):
             print("— | " * 7)
             if mode:
-                print(i+1, *[self.fild_sym if x == self.ship_sym else x for x in dot], sep=self.separator,end=" |\n")
+                print(i + 1, *[self.fild_sym if x == self.ship_sym else x for x in dot], sep=self.separator, end=" |\n")
             else:
-                print(i+1, *dot, sep=self.separator, end=" |\n")
+                print(i + 1, *dot, sep=self.separator, end=" |\n")
 
-    def Add_Ship(self,ship):
-
+    def Add_Ship(self, ship):
+        """
+        Добавляет точки корабля в список поля
+        :param ship: Объект корабля
+        """
         for i in ship:
-            if self.out_of_board(i) or self.is_not_legal(i):
-                raise BoardWrongShipException()
-        for i in ship:
-            self.btfld[i.v-1][i.h-1] = self.ship_sym
+            self.btfld[i.v - 1][i.h - 1] = self.ship_sym
             self.Define_blinds(i)
 
-    def Define_blinds(self,blind):
-
-
+    def Define_blinds(self, blind):
+        """
+        Выставвляет "мёртвую зону" вокруг корабля
+        :param blind: Объект точки вокруг которой нужна мёртвая зона
+        """
         for i in range(-1, 2):
             for t in range(-1, 2):
-                  if 0 <= (blind.v)-1+i < self.size and 0 <= (blind.h)-1+t < self.size:
-                    if self.btfld[blind.v-1+i][blind.h-1+t] != self.ship_sym:
-                        self.blind_spots.append(Dot((blind.v)-1+i,(blind.h)-1+t))
-                        self.btfld[blind.v -1+ i][blind.h -1+ t] = self.blind_sym
-
-    def out_of_board(self, check):
-        return not((0<= check.v-1 < self.size) and (0 <= check.h-1 < self.size))
-
-    def is_not_legal(self,check):
-        return not ((self.btfld[check.v-1][check.h-1] != self.ship_sym) and (check not in self.blind_spots))
+                if 0 <= (blind.v) - 1 + i < self.size and 0 <= (blind.h) - 1 + t < self.size:
+                    if self.btfld[blind.v - 1 + i][blind.h - 1 + t] != self.ship_sym:
+                        self.blind_spots.append(Dot((blind.v) - 1 + i, (blind.h) - 1 + t))
+                        # следующая строка на время разработки, чтобы видеть правильность мёртвой зоны
+                        self.btfld[blind.v - 1 + i][blind.h - 1 + t] = self.blind_sym
 
 
 class Game:
     def __init__(self):
+        """
+        Объект игры
+        """
         self.game = 0
         self.size = 6
-        self.fleet = [3]#,2,2,1,1,1,1]
+        self.fleet = [3, 2, 2, 1, 1, 1, 1]
 
-    # def Create_board(self):
-    #     brd = Board()
-    #     for i in self.fleet:
-    #         brd.Add_Ship(self.Construct_ship(i))
-    #     brd.Showbatlefield()
-
-    def Construct_ship(self):
+    def Construct_board(self):
+        """
+        Создаёт игровое поле, и размещает на нём корабли.
+        :return: Игровое поле с кораблями
+        """
         brd = Board()
-        decks = 3
-        #for i in self.fleet:
-        limit = self.size - decks
-        orient = randint(0,1)
-        hr = randint(1, limit)
-        vr = randint(1, self.size)
-        if orient:
-            hr,vr = vr,hr
 
-        origin = Dot(hr,vr)
-        print (origin)
-        avlbl_pool = []
-        print(brd.btfld)
-        for h, dot in enumerate(brd.btfld):
-            for v, point in enumerate(dot):
-                if brd.btfld[h][v] == 0:# and h < limit+3 and v < limit+3:
-                    avlbl_pool.append(Dot(h+1,v+1))
+        for decks in self.fleet:
 
+            avlbl_pool = []
+            limit = self.size - decks
+            orient = randint(0, 1)
 
-        #gl = randint(0, len(avlbl_pool))
-        # for points in enumerate(avlbl_pool[gl:gl+decks]):
-        while True:
-            gl = randint(0, len(avlbl_pool))
-            print("Before Cicle", avlbl_pool[gl])
-            if (avlbl_pool[gl].v < limit or avlbl_pool[gl].h < limit):
-                if (((avlbl_pool[gl+decks].h - avlbl_pool[gl+decks-1].h == 1 and avlbl_pool[gl+decks-1].h - avlbl_pool[gl+decks-2].h == 1) or (avlbl_pool[gl + decks].v - avlbl_pool[gl + decks - 1].v == 1 and avlbl_pool[gl + decks - 1].v - avlbl_pool[
-                    gl + decks - 2].v == 1))):
-                    print("Cicle",avlbl_pool[gl])
-                    print("V", avlbl_pool[gl].v)
-                    break
-        print("ori ", orient)
-        if orient and avlbl_pool[gl].h < avlbl_pool[gl].v:
-            avlbl_pool[gl].h,avlbl_pool[gl].v = avlbl_pool[gl].v,avlbl_pool[gl].h
-        elif not orient and avlbl_pool[gl].h > avlbl_pool[gl].v:
-            avlbl_pool[gl].h, avlbl_pool[gl].v = avlbl_pool[gl].v, avlbl_pool[gl].h
-        if avlbl_pool[gl].v == 0:
-            avlbl_pool[gl].v +=1
-        if avlbl_pool[gl].h == 0:
-            avlbl_pool[gl].h += 1
-        ref_point = avlbl_pool[gl]
-        print("Ref", ref_point)
+            for h, dot in enumerate(brd.btfld):
+                for v, point in enumerate(dot):
+                    if point == 0:
+                        avlbl_pool.append(Dot(h + 1, v + 1))
 
-        ship = Ship(ref_point,3, orient)
+            while True:
+                gl = randint(0, len(avlbl_pool) - 1)
 
-        brd.Add_Ship(ship.build_ship)
+                print("AVALABLE POOL", avlbl_pool)
+                if (avlbl_pool[gl].v < limit or avlbl_pool[gl].h < limit):
+                    if decks == 3:
+                        if (((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1 and avlbl_pool[
+                            gl + decks - 2].h - avlbl_pool[gl + decks - 3].h == 1) or (
+                                     avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1 and avlbl_pool[
+                                 gl + decks - 2].v - avlbl_pool[
+                                         gl + decks - 3].v == 1))):
+                            print("3 decks", avlbl_pool[gl], avlbl_pool[gl + 1], avlbl_pool[gl + 2])
 
+                            break
+                    if decks == 2:
+                        if ((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1) or (
+                                avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1)):
+                            print("2 decks", avlbl_pool[gl], avlbl_pool[gl + 1])
+                            break
+                    if decks == 1:
+                        print("1 deck", avlbl_pool[gl])
+                        break
 
+            if orient and avlbl_pool[gl].h > avlbl_pool[gl].v and decks > 1:
+                avlbl_pool[gl].swap
+            elif not orient and avlbl_pool[gl].h < avlbl_pool[gl].v:
+                avlbl_pool[gl].swap
+            if avlbl_pool[gl].v == 0:
+                avlbl_pool[gl].v += 1
+            if avlbl_pool[gl].h == 0:
+                avlbl_pool[gl].h += 1
+            ref_point = avlbl_pool[gl]
 
-        # print(*avlbl_pool, sep="\n")
-        # print(len(avlbl_pool))
+            brd.Add_Ship(Ship(ref_point, decks, orient).build_ship)
 
         brd.Showbatlefield()
+        return brd
 
 
 
-        #print(ship.build_ship)
-        #return ship.build_ship
-
-
-
-# d1 = Dot(2,2)
-# print(d1)
-# s1 = Ship(d1,3,1)
-# s1.build_ship
-# b1 = Board()
-# b1.Showbatlefield()
-# b1.Add_Ship(s1.build_ship)
-# b1.Showbatlefield()
-# print(len(b1.blind_spots))
 g1 = Game()
-# print(g1.Construct_ship())
-g1.Construct_ship()
-# g1.Create_board()
+g1.Construct_board()
+
