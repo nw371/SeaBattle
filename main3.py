@@ -106,17 +106,40 @@ class Game:
         self.size = 6
         self.fleet = [3]#,2,2,1,1,1,1]
 
-    def Create_board(self):
+    # def Create_board(self):
+    #     brd = Board()
+    #     for i in self.fleet:
+    #         brd.Add_Ship(self.Construct_ship(i))
+    #     brd.Showbatlefield()
+
+    def Construct_ship(self):
         brd = Board()
-        for i in self.fleet:
-            brd.Add_Ship(self.Construct_ship(i))
+        #for i in self.fleet:
+        limit = self.size - 3
+        orient = randint(0,1)
+        h = randint(1, limit)
+        v = randint(1, self.size)
+        if orient:
+            h,v = v,h
+
+        ship = Ship(Dot(h,v),3, orient)
+        brd.Add_Ship(ship.build_ship)
+        avlbl_pool = []
+        print(brd.btfld)
+        for h, dot in enumerate(brd.btfld):
+            for v, point in enumerate(dot):
+                if brd.btfld[h][v] == 0 and h < limit+3 and v < limit+3:
+                    avlbl_pool.append([h, v])
+
+        print(*avlbl_pool, sep="\n")
+        print(len(avlbl_pool))
+
         brd.Showbatlefield()
 
-    def Construct_ship(self,decks=3):
-        limit = self.size - decks
-        ship = Ship(Dot(randint(1, limit), randint(1,limit)),decks, randint(0,1))
+
+
         #print(ship.build_ship)
-        return ship.build_ship
+        #return ship.build_ship
 
 
 
@@ -131,4 +154,5 @@ class Game:
 # print(len(b1.blind_spots))
 g1 = Game()
 # print(g1.Construct_ship())
-g1.Create_board()
+g1.Construct_ship()
+# g1.Create_board()
