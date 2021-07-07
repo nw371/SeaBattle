@@ -85,7 +85,7 @@ class Board:
         self.blind_spots = []
         self.btfld = [[self.fild_sym] * self.size for _ in range(self.size)]
 
-    def Showbatlefield(self, mode=0):
+    def show_battlefield(self, mode=0):
         """
         Отрисовывает играовое поле
         :param mode: Видимость кораблей на поле: 1 спрятаны, 0 видны
@@ -98,16 +98,16 @@ class Board:
             else:
                 print(i + 1, *dot, sep=self.separator, end=" |\n")
 
-    def Add_Ship(self, ship):
+    def add_ship(self, ship):
         """
-        Добавляет точки корабля в список поля
+        Добавляет точки корабля в список поля заменяя сымвол поля на сымвол корабля.
         :param ship: Объект корабля
         """
         for i in ship:
             self.btfld[i.v - 1][i.h - 1] = self.ship_sym
-            self.Define_blinds(i)
+            self.define_blinds(i)
 
-    def Define_blinds(self, blind):
+    def define_blinds(self, blind):
         """
         Выставвляет "мёртвую зону" вокруг корабля
         :param blind: Объект точки вокруг которой нужна мёртвая зона
@@ -130,7 +130,7 @@ class Game:
         self.size = 6
         self.fleet = [3, 2, 2, 1, 1, 1, 1]
 
-    def Construct_board(self):
+    def construct_board(self):
         """
         Создаёт игровое поле, и размещает на нём корабли.
         :return: Игровое поле с кораблями
@@ -181,13 +181,13 @@ class Game:
                 avlbl_pool[gl].h += 1
             ref_point = avlbl_pool[gl]
 
-            brd.Add_Ship(Ship(ref_point, decks, orient).build_ship)
+            brd.add_ship(Ship(ref_point, decks, orient).build_ship)
 
-        brd.Showbatlefield()
+        brd.show_battlefield()
         return brd
 
 
 
 g1 = Game()
-g1.Construct_board()
+g1.construct_board()
 
