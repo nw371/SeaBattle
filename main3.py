@@ -35,8 +35,6 @@ class Dot:
 
 
 class Ship:
-    decks = []
-
     def __init__(self, origin, size, orientation):
         """
         Создаёт объект корабля
@@ -46,7 +44,8 @@ class Ship:
         """
         self.origin = origin
         self.size = size
-        self.oritentation = orientation
+        self.orientation = orientation
+        self.decks = []
 
     @property
     def build_ship(self):
@@ -58,17 +57,16 @@ class Ship:
 
             self.decks.append(copy.deepcopy(self.origin))
 
-            if self.oritentation == 1:
+            if self.orientation == 1:
                 self.origin.v += 1
 
-            elif self.oritentation == 0:
+            elif self.orientation == 0:
                 self.origin.h += 1
 
         return self.decks
 
 
 class Board:
-
     def __init__(self):
         """
         Создаёт объект доски
@@ -103,6 +101,7 @@ class Board:
         Добавляет точки корабля в список поля заменяя сымвол поля на сымвол корабля.
         :param ship: Объект корабля
         """
+        print("THIS IS SHIP ",ship)
         for i in ship:
             self.btfld[i.v - 1][i.h - 1] = self.ship_sym
             self.define_blinds(i)
@@ -153,21 +152,25 @@ class Game:
 
                 print("AVALABLE POOL", avlbl_pool)
                 if (avlbl_pool[gl].v < limit or avlbl_pool[gl].h < limit):
-                    if decks == 3:
-                        if (((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1 and avlbl_pool[
-                            gl + decks - 2].h - avlbl_pool[gl + decks - 3].h == 1) or (
-                                     avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1 and avlbl_pool[
-                                 gl + decks - 2].v - avlbl_pool[
-                                         gl + decks - 3].v == 1))):
-                            print("3 decks", avlbl_pool[gl], avlbl_pool[gl + 1], avlbl_pool[gl + 2])
 
+                    if decks == 3:
+                        if (((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1 and
+                              avlbl_pool[gl + decks - 2].h - avlbl_pool[gl + decks - 3].h == 1) or
+                             (avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1 and
+                              avlbl_pool[gl + decks - 2].v - avlbl_pool[gl + decks - 3].v == 1))):
+
+                            print("3 decks", avlbl_pool[gl], avlbl_pool[gl + 1], avlbl_pool[gl + 2])
                             break
+
                     if decks == 2:
-                        if ((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1) or (
-                                avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1)):
+                        if ((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1) or
+                                (avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1)):
+
                             print("2 decks", avlbl_pool[gl], avlbl_pool[gl + 1])
                             break
+
                     if decks == 1:
+
                         print("1 deck", avlbl_pool[gl])
                         break
 
@@ -175,6 +178,7 @@ class Game:
                 avlbl_pool[gl].swap
             elif not orient and avlbl_pool[gl].h < avlbl_pool[gl].v:
                 avlbl_pool[gl].swap
+
             if avlbl_pool[gl].v == 0:
                 avlbl_pool[gl].v += 1
             if avlbl_pool[gl].h == 0:
