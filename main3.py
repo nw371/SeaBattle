@@ -1,7 +1,23 @@
 import copy
+from random import randint
+
+
+class BoardException(Exception):
+    pass
+
+class BoardOutException(BoardException):
+    def __str__(self):
+        return "Вы пытаетесь выстрелить за доску!"
+
+class BoardUsedException(BoardException):
+    def __str__(self):
+        return "Вы уже стреляли в эту клетку"
+
+class BoardWrongShipException(BoardException):
+    pass
 
 class Dot:
-    def __init__(self, v, h):
+    def __init__(self, h, v):
         self.v = v
         self.h = h
 
@@ -54,36 +70,65 @@ class Board:
         for i,dot in enumerate(self.btfld):
             print("— | " * 7)
             if mode:
-                print(i, *[self.fild_sym if x == self.ship_sym else x for x in dot], sep=self.separator,end=" |\n")
+                print(i+1, *[self.fild_sym if x == self.ship_sym else x for x in dot], sep=self.separator,end=" |\n")
             else:
-                print(i, *dot, sep=self.separator, end=" |\n")
+                print(i+1, *dot, sep=self.separator, end=" |\n")
 
     def Add_Ship(self,ship):
 
         for i in ship:
-            self.btfld[i.v][i.h] = self.ship_sym
+            if self.out_of_board(i) or self.is_not_legal(i):
+                raise BoardWrongShipException()
+        for i in ship:
+            self.btfld[i.v-1][i.h-1] = self.ship_sym
             self.Define_blinds(i)
 
     def Define_blinds(self,blind):
 
+
         for i in range(-1, 2):
             for t in range(-1, 2):
-                if self.btfld[blind.v+i][blind.h+t] != self.ship_sym:
-                    self.blind_spots.append(Dot((blind.v)+i,(blind.h)+t))
-                    #self.btfld[blind.v + i][blind.h + t] = self.blind_sym
+                  if 0 <= (blind.v)-1+i < self.size and 0 <= (blind.h)-1+t < self.size:
+                    if self.btfld[blind.v-1+i][blind.h-1+t] != self.ship_sym:
+                        self.blind_spots.append(Dot((blind.v)-1+i,(blind.h)-1+t))
+                        self.btfld[blind.v -1+ i][blind.h -1+ t] = self.blind_sym
 
     def out_of_board(self, check):
-        return not((0<= check.v < self.size) and (0<= check.h < self.size))
+        return not((0<= check.v-1 < self.size) and (0 <= check.h-1 < self.size))
 
-    def is_legal(self,check):
-        return not ((self.btfld[check.v][check.h] != self.ship_sym) and (check not in self.blind_spots))
+    def is_not_legal(self,check):
+        return not ((self.btfld[check.v-1][check.h-1] != self.ship_sym) and (check not in self.blind_spots))
 
 
-d1 = Dot(1,2)
-s1 = Ship(d1,3,1)
-s1.build_ship
-b1 = Board()
-b1.Showbatlefield()
-b1.Add_Ship(s1.build_ship)
-b1.Showbatlefield()
-print(len(b1.blind_spots))
+class Game:
+    def __init__(self):
+        self.game = 0
+        self.size = 6
+        self.fleet = [3]#,2,2,1,1,1,1]
+
+    def Create_board(self):
+        brd = Board()
+        for i in self.fleet:
+            brd.Add_Ship(self.Construct_ship(i))
+        brd.Showbatlefield()
+
+    def Construct_ship(self,decks=3):
+        limit = self.size - decks
+        ship = Ship(Dot(randint(1, limit), randint(1,limit)),decks, randint(0,1))
+        #print(ship.build_ship)
+        return ship.build_ship
+
+
+
+# d1 = Dot(2,2)
+# print(d1)
+# s1 = Ship(d1,3,1)
+# s1.build_ship
+# b1 = Board()
+# b1.Showbatlefield()
+# b1.Add_Ship(s1.build_ship)
+# b1.Showbatlefield()
+# print(len(b1.blind_spots))
+g1 = Game()
+# print(g1.Construct_ship())
+g1.Create_board()
