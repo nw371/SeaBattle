@@ -114,25 +114,56 @@ class Game:
 
     def Construct_ship(self):
         brd = Board()
+        decks = 3
         #for i in self.fleet:
-        limit = self.size - 3
+        limit = self.size - decks
         orient = randint(0,1)
-        h = randint(1, limit)
-        v = randint(1, self.size)
+        hr = randint(1, limit)
+        vr = randint(1, self.size)
         if orient:
-            h,v = v,h
+            hr,vr = vr,hr
 
-        ship = Ship(Dot(h,v),3, orient)
-        brd.Add_Ship(ship.build_ship)
+        origin = Dot(hr,vr)
+        print (origin)
         avlbl_pool = []
         print(brd.btfld)
         for h, dot in enumerate(brd.btfld):
             for v, point in enumerate(dot):
-                if brd.btfld[h][v] == 0 and h < limit+3 and v < limit+3:
-                    avlbl_pool.append([h, v])
+                if brd.btfld[h][v] == 0:# and h < limit+3 and v < limit+3:
+                    avlbl_pool.append(Dot(h+1,v+1))
 
-        print(*avlbl_pool, sep="\n")
-        print(len(avlbl_pool))
+
+        #gl = randint(0, len(avlbl_pool))
+        # for points in enumerate(avlbl_pool[gl:gl+decks]):
+        while True:
+            gl = randint(0, len(avlbl_pool))
+            print("Before Cicle", avlbl_pool[gl])
+            if (avlbl_pool[gl].v < limit or avlbl_pool[gl].h < limit):
+                if (((avlbl_pool[gl+decks].h - avlbl_pool[gl+decks-1].h == 1 and avlbl_pool[gl+decks-1].h - avlbl_pool[gl+decks-2].h == 1) or (avlbl_pool[gl + decks].v - avlbl_pool[gl + decks - 1].v == 1 and avlbl_pool[gl + decks - 1].v - avlbl_pool[
+                    gl + decks - 2].v == 1))):
+                    print("Cicle",avlbl_pool[gl])
+                    print("V", avlbl_pool[gl].v)
+                    break
+        print("ori ", orient)
+        if orient and avlbl_pool[gl].h < avlbl_pool[gl].v:
+            avlbl_pool[gl].h,avlbl_pool[gl].v = avlbl_pool[gl].v,avlbl_pool[gl].h
+        elif not orient and avlbl_pool[gl].h > avlbl_pool[gl].v:
+            avlbl_pool[gl].h, avlbl_pool[gl].v = avlbl_pool[gl].v, avlbl_pool[gl].h
+        if avlbl_pool[gl].v == 0:
+            avlbl_pool[gl].v +=1
+        if avlbl_pool[gl].h == 0:
+            avlbl_pool[gl].h += 1
+        ref_point = avlbl_pool[gl]
+        print("Ref", ref_point)
+
+        ship = Ship(ref_point,3, orient)
+
+        brd.Add_Ship(ship.build_ship)
+
+
+
+        # print(*avlbl_pool, sep="\n")
+        # print(len(avlbl_pool))
 
         brd.Showbatlefield()
 
