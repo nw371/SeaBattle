@@ -101,7 +101,7 @@ class Board:
         Добавляет точки корабля в список поля заменяя сымвол поля на сымвол корабля.
         :param ship: Объект корабля
         """
-        print("THIS IS SHIP ",ship)
+        print("THIS IS SHIP ", ship)
         for i in ship:
             self.btfld[i.v][i.h] = self.ship_sym
             self.define_blinds(i)
@@ -113,9 +113,9 @@ class Board:
         """
         for i in range(-1, 2):
             for t in range(-1, 2):
-                if 0 <= (blind.v) + i < self.size and 0 <= (blind.h) + t < self.size:
+                if 0 <= blind.v + i < self.size and 0 <= blind.h + t < self.size:
                     if self.btfld[blind.v + i][blind.h + t] != self.ship_sym:
-                        self.blind_spots.append(Dot((blind.v) + i, (blind.h) + t))
+                        self.blind_spots.append(Dot(blind.v + i, blind.h + t))
                         # следующая строка на время разработки, чтобы видеть правильность мёртвой зоны
                         self.btfld[blind.v + i][blind.h + t] = self.blind_sym
 
@@ -149,38 +149,36 @@ class Game:
 
             while True:
                 gl = randint(0, len(avlbl_pool) - 1)
-                print("THIS IS BOARD: ",brd.btfld)
+                print("THIS IS BOARD: ", brd.btfld)
                 print("AVALABLE POOL", avlbl_pool)
                 print("SIZE OF POOL", len(avlbl_pool))
-                if (avlbl_pool[gl].v < limit or avlbl_pool[gl].h < limit):
+                if avlbl_pool[gl].v < limit or avlbl_pool[gl].h < limit:
 
                     if decks == 3:
                         if (((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1 and
                               avlbl_pool[gl + decks - 2].h - avlbl_pool[gl + decks - 3].h == 1) or
                              (avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1 and
                               avlbl_pool[gl + decks - 2].v - avlbl_pool[gl + decks - 3].v == 1))):
-
                             print("3 decks", avlbl_pool[gl], avlbl_pool[gl + 1], avlbl_pool[gl + 2])
                             break
 
                     if decks == 2:
                         if ((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1) or
                                 (avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1)):
-
                             print("2 decks", avlbl_pool[gl], avlbl_pool[gl + 1])
                             break
 
                     if decks == 1:
-
                         print("1 deck", avlbl_pool[gl])
                         break
 
-            if orient and avlbl_pool[gl].h > avlbl_pool[gl].v and decks > 1:
-                avlbl_pool[gl] = avlbl_pool[gl].swap
-            elif not orient and avlbl_pool[gl].h < avlbl_pool[gl].v:
-                avlbl_pool[gl] = avlbl_pool[gl].swap
+            if orient and avlbl_pool[gl].h < avlbl_pool[gl].v and decks > 1:
+                avlbl_pool[gl].swap
+            elif not orient and avlbl_pool[gl].h > avlbl_pool[gl].v:
+                avlbl_pool[gl].swap
 
             ref_point = avlbl_pool[gl]
+            print("REF ", ref_point)
 
             brd.add_ship(Ship(ref_point, decks, orient).build_ship)
 
@@ -188,7 +186,5 @@ class Game:
         return brd
 
 
-
 g1 = Game()
 g1.construct_board()
-
