@@ -103,7 +103,7 @@ class Board:
         """
         print("THIS IS SHIP ",ship)
         for i in ship:
-            self.btfld[i.v - 1][i.h - 1] = self.ship_sym
+            self.btfld[i.v][i.h] = self.ship_sym
             self.define_blinds(i)
 
     def define_blinds(self, blind):
@@ -113,11 +113,11 @@ class Board:
         """
         for i in range(-1, 2):
             for t in range(-1, 2):
-                if 0 <= (blind.v) - 1 + i < self.size and 0 <= (blind.h) - 1 + t < self.size:
-                    if self.btfld[blind.v - 1 + i][blind.h - 1 + t] != self.ship_sym:
-                        self.blind_spots.append(Dot((blind.v) - 1 + i, (blind.h) - 1 + t))
+                if 0 <= (blind.v) + i < self.size and 0 <= (blind.h) + t < self.size:
+                    if self.btfld[blind.v + i][blind.h + t] != self.ship_sym:
+                        self.blind_spots.append(Dot((blind.v) + i, (blind.h) + t))
                         # следующая строка на время разработки, чтобы видеть правильность мёртвой зоны
-                        self.btfld[blind.v - 1 + i][blind.h - 1 + t] = self.blind_sym
+                        self.btfld[blind.v + i][blind.h + t] = self.blind_sym
 
 
 class Game:
@@ -145,12 +145,13 @@ class Game:
             for h, dot in enumerate(brd.btfld):
                 for v, point in enumerate(dot):
                     if point == 0:
-                        avlbl_pool.append(Dot(h + 1, v + 1))
+                        avlbl_pool.append(Dot(h, v))
 
             while True:
                 gl = randint(0, len(avlbl_pool) - 1)
-
+                print("THIS IS BOARD: ",brd.btfld)
                 print("AVALABLE POOL", avlbl_pool)
+                print("SIZE OF POOL", len(avlbl_pool))
                 if (avlbl_pool[gl].v < limit or avlbl_pool[gl].h < limit):
 
                     if decks == 3:
@@ -175,14 +176,10 @@ class Game:
                         break
 
             if orient and avlbl_pool[gl].h > avlbl_pool[gl].v and decks > 1:
-                avlbl_pool[gl].swap
+                avlbl_pool[gl] = avlbl_pool[gl].swap
             elif not orient and avlbl_pool[gl].h < avlbl_pool[gl].v:
-                avlbl_pool[gl].swap
+                avlbl_pool[gl] = avlbl_pool[gl].swap
 
-            if avlbl_pool[gl].v == 0:
-                avlbl_pool[gl].v += 1
-            if avlbl_pool[gl].h == 0:
-                avlbl_pool[gl].h += 1
             ref_point = avlbl_pool[gl]
 
             brd.add_ship(Ship(ref_point, decks, orient).build_ship)
