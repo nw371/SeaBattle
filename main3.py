@@ -1,6 +1,10 @@
 import copy
 from random import randint
 
+class GameException(Exception):
+    pass
+    #raise ValueError("empty range for randrange() (%d, %d, %d)" % (istart, istop, width))
+    #ValueError: empty range for randrange()(0, 0, 0)
 
 class Dot:
     def __init__(self, h, v):
@@ -35,17 +39,17 @@ class Dot:
 
 
 class Ship:
-    def __init__(self, origin, size, orientation):
+    def __init__(self, decks):#origin, size, orientation):
         """
         Создаёт объект корабля
         :param origin: Нос корабля. Точка отсчёта
         :param size: Размер корабля в точках
         :param orientation: Расположение корабля 1=вертикаль, 0=горизонталь
         """
-        self.origin = origin
-        self.size = size
-        self.orientation = orientation
-        self.decks = []
+        # self.origin = origin
+        # self.size = size
+        # self.orientation = orientation
+        self.decks = decks
 
     @property
     def build_ship(self):
@@ -53,15 +57,15 @@ class Ship:
         Создаёт корабль отсчитывая размер от носа по направлению ориентации
         :return: Координаты всех палуб корабля в виде списка объектов точек
         """
-        while len(self.decks) < self.size:
-
-            self.decks.append(copy.deepcopy(self.origin))
-
-            if self.orientation == 1:
-                self.origin.v += 1
-
-            elif self.orientation == 0:
-                self.origin.h += 1
+        # while len(self.decks) < self.size:
+        #
+        #     self.decks.append(copy.deepcopy(self.origin))
+        #
+        #     if self.orientation == 1:
+        #         self.origin.v += 1
+        #
+        #     elif self.orientation == 0:
+        #         self.origin.h += 1
 
         return self.decks
 
@@ -145,7 +149,8 @@ class Game:
             for h, dot in enumerate(brd.btfld):
                 for v, point in enumerate(dot):
                     if point == 0:
-                        avlbl_pool.append(Dot(h, v))
+                        print("POOL DATA: ",h,dot,v,point)
+                        avlbl_pool.append(Dot(v, h))
 
             while True:
                 gl = randint(0, len(avlbl_pool) - 1)
@@ -159,28 +164,35 @@ class Game:
                               avlbl_pool[gl + decks - 2].h - avlbl_pool[gl + decks - 3].h == 1) or
                              (avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1 and
                               avlbl_pool[gl + decks - 2].v - avlbl_pool[gl + decks - 3].v == 1))):
+                            brd.add_ship(Ship(avlbl_pool[gl:gl+decks]).build_ship)
                             print("3 decks", avlbl_pool[gl], avlbl_pool[gl + 1], avlbl_pool[gl + 2])
+                            print("ORIENT: ",orient)
                             break
 
                     if decks == 2:
                         if ((avlbl_pool[gl + decks - 1].h - avlbl_pool[gl + decks - 2].h == 1) or
                                 (avlbl_pool[gl + decks - 1].v - avlbl_pool[gl + decks - 2].v == 1)):
+                            brd.add_ship(Ship(avlbl_pool[gl:gl + decks]).build_ship)
                             print("2 decks", avlbl_pool[gl], avlbl_pool[gl + 1])
+                            print("ORIENT: ", orient)
                             break
 
                     if decks == 1:
+                        brd.add_ship(Ship(avlbl_pool[gl:gl + decks]).build_ship)
                         print("1 deck", avlbl_pool[gl])
+                        print("ORIENT: ", orient)
                         break
 
-            if orient and avlbl_pool[gl].h < avlbl_pool[gl].v and decks > 1:
-                avlbl_pool[gl].swap
-            elif not orient and avlbl_pool[gl].h > avlbl_pool[gl].v:
-                avlbl_pool[gl].swap
-
-            ref_point = avlbl_pool[gl]
-            print("REF ", ref_point)
-
-            brd.add_ship(Ship(ref_point, decks, orient).build_ship)
+            # if orient and avlbl_pool[gl].h < avlbl_pool[gl].v and decks > 1:
+            #     orient = not(orient)
+            #
+            # elif not orient and avlbl_pool[gl].h > avlbl_pool[gl].v:
+            #     orient = not(orient)
+            #
+            # ref_point = avlbl_pool[gl]
+            # print("REF ", ref_point)
+            #
+            # brd.add_ship(Ship(ref_point, decks, orient).build_ship)
 
         brd.show_battlefield()
         return brd
